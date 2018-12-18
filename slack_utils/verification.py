@@ -20,7 +20,7 @@ def verify_request(request):
 
     request_body = request.body.decode("utf-8")
 
-    basestring = f"v0:{slack_request_timestamp}:{request_body}".encode('utf-8')
+    basestring = "v0:{}:{}".format(slack_request_timestamp, request_body).encode('utf-8')
 
     try:
         slack_signing_secret = bytes(settings.SLACK_SIGNING_SECRET, 'utf-8')
