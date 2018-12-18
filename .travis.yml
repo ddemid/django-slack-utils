@@ -1,0 +1,18 @@
+language: python
+python:
+  - "3.4"
+  - "3.5"
+  - "3.6"
+before_install:
+  - export DJANGO_SETTINGS_MODULE=celery_haystack.test_settings
+install:
+  - pip install -e .
+  - pip install -r tests/requirements.txt $DJANGO
+before_script:
+  - flake8 celery_haystack --ignore=E501,E731
+script:
+  - coverage run --branch --source=slack_utils `which django-admin.py` test celery_haystack
+  - coverage report
+env:
+  - DJANGO="Django>=1.11,<1.12"
+  - DJANGO="Django>=2.0,<2.1"
