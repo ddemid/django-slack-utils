@@ -3,6 +3,7 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+  - "3.7"
 before_install:
   - export DJANGO_SETTINGS_MODULE=celery_haystack.test_settings
 install:
@@ -16,3 +17,4 @@ script:
 env:
   - DJANGO="Django>=1.11,<1.12"
   - DJANGO="Django>=2.0,<2.1"
+  - DJANGO="Django>=2.1,<2.2"
