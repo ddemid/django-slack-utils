@@ -1,7 +1,9 @@
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.utils.decorators import method_decorator
 from django.views import View
 
 from slack_utils.decorators import slack_view
+from slack_utils.forms import CommandForm
 
 
 class SlackView(View):
@@ -10,3 +12,13 @@ class SlackView(View):
         return super(SlackView, self).dispatch(request, *args, **kwargs)
 
 
+class CommandView(SlackView):
+    def handle_command(self, command, text, **kwargs):
+        raise NotImplementedError
+
+    def post(self, request, *args, **kwargs):
+        form = CommandForm(request.POST)
+        if form.is_valid():
+            return JsonResponse(self.handle_command(**form.cleaned_data))
+
+        return HttpResponseBadRequest('Invalid request')
