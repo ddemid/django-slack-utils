@@ -31,7 +31,4 @@ def verify_request(request):
 
     my_signature = 'v0=' + hmac.new(slack_signing_secret, basestring, hashlib.sha256).hexdigest()
 
-    if hmac.compare_digest(my_signature, slack_signature):
-        return True
-
-    return False
+    return hmac.compare_digest(my_signature, slack_signature)

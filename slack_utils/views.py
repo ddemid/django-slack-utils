@@ -19,6 +19,8 @@ class CommandView(SlackView):
     def post(self, request, *args, **kwargs):
         form = CommandForm(request.POST)
         if form.is_valid():
-            return JsonResponse(self.handle_command(**form.cleaned_data))
+            text = form.cleaned_data.pop('text')
+            command = form.cleaned_data.pop('command')
+            return self.handle_command(command, text, **form.cleaned_data)
 
         return HttpResponseBadRequest('Invalid request')
