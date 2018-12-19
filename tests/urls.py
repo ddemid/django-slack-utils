@@ -1,6 +1,5 @@
-from django.conf.urls import include
-from django.urls import path
+from django.conf.urls import include, url
 
 urlpatterns = [
-    path('slack/', include('slack_utils.urls')),
+    url('slack/', include('slack_utils.urls')),
 ]

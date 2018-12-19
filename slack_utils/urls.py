@@ -1,7 +1,7 @@
-from django.urls import path
+from django.conf.urls import url
 
 from slack_utils import views
 
 urlpatterns = [
-    path('events/', views.EventsView.as_view(), name='slack-events-api'),
+    url('events/$', views.EventsView.as_view(), name='slack-events-api'),
 ]
