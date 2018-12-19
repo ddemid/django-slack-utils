@@ -16,7 +16,7 @@ SLACK_SIGNING_SECRET = 'your signing secret from Slack'
 
 ## Usage
 
-###View decorator
+### View decorator
 ```python
 from slack_utils.decorators import slack_view
 from django.http import HttpResponse
@@ -29,7 +29,7 @@ def sample_view(request, *args, **kwargs):
 ```
 
 
-###Class-based view
+### Class-based view
 ```python
 from slack_utils.views import SlackView
 from django.http import HttpResponse
@@ -41,7 +41,7 @@ class SampleView(SlackView):
 
 ```
 
-###Slash command parsing
+### Slash command parsing
 
 https://api.slack.com/slash-commands
 ```python
@@ -53,4 +53,4 @@ class SampleCommandView(CommandView):
         return HttpResponse("Hello!")
 ```
 
-`**kwargs`would get the rest of the data from Slack request
+`**kwargs` would get the rest of the data from Slack request
