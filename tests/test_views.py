@@ -81,3 +81,5 @@ class CommandViewCase(TestCase):
 
         self.assertEqual(resp.status_code, 400)
         self.assertFalse(handle_command_mock.called)
+
+
