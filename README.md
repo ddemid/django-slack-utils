@@ -16,6 +16,18 @@ SLACK_SIGNING_SECRET = 'your signing secret from Slack'
 
 ```
 
+Add the following to your `urls.py`
+```python
+    from django.conf.urls import include
+    from django.urls import path
+    
+    urlpatterns = [
+        ...
+        path('slack/', include('slack_utils.urls')),
+    ]
+
+```
+
 ## Usage
 
 ### View decorator
@@ -49,39 +61,32 @@ class SampleView(SlackView):
 ```
 
 
-### Slash command
-To easily handle [Slack slash commands](https://api.slack.com/slash-commands), use `CommandView` as a base class for your class-based views.
+### Slash commands
+To handle [Slack slash commands](https://api.slack.com/slash-commands), point the command URL to `/slack/commands/`.
 
+Now just add a handler function to `slack.py` module of your app.
 
 ```python
-from slack_utils.views import CommandView
+from slack_utils.decorators import slack_command
 from django.http import HttpResponse
 
-class SampleCommandView(CommandView):
-    def handle_command(self, command, text, **kwargs):
-        return HttpResponse("Hello!")
+@slack_command('/test')
+def test_command(text, **kwargs):
+    # your logic
+    return HttpResponse("Hello!")
+
 ```
 
 `**kwargs`would get the rest of the data from Slack request
 
 ### Events API
 
-To handle [Slack events](https://api.slack.com/events-api) add the following to your `urls.py`
-```python
-    from django.conf.urls import include
-    from django.urls import path
-    
-    urlpatterns = [
-        ...
-        path('slack/', include('slack_utils.urls')),
-    ]
+Point [Slack events API](https://api.slack.com/events-api) to the `/slack/events/`.
 
-```
-
-Event handler subscription can be done in two ways:
+Subscription can be done in two ways:
 
 #### Receiver decorator
-Put them into `slack_events.py` of your app or make sure it's loadded once. 
+Put them into `slack.py` of your app or make sure it's loaded once. 
 
 ```python
 from slack_utils.decorators import slack_receiver

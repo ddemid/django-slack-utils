@@ -3,6 +3,7 @@ from django.http import HttpResponseBadRequest
 
 from slack_utils.verification import verify_request
 from slack_utils import signals
+from slack_utils.commands import registry
 
 
 def slack_view(view_func):
@@ -25,3 +26,9 @@ def slack_receiver(event_type_):
         signals.event_received.connect(signal_receiver, weak=False)
 
     return decorator_receiver
+
+
+def slack_command(command):
+    def _decorator(handler_func):
+        registry.register(command, handler_func)
+    return _decorator

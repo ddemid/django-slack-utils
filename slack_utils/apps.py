@@ -9,4 +9,5 @@ class SlackUtilsConfig(AppConfig):
     def ready(self):
         super().ready()
 
-        autodiscover_modules('slack_events')
+        autodiscover_modules('slack_events')    # capability
+        autodiscover_modules('slack')
