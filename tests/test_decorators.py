@@ -1,6 +1,9 @@
 from unittest import mock
+from unittest.mock import Mock
+
 from django.test import TestCase
-from slack_utils.decorators import slack_view
+from slack_utils.decorators import slack_view, slack_receiver
+from slack_utils.signals import event_received
 
 
 class SlackViewDecoratorTestCase(TestCase):
@@ -41,3 +44,25 @@ class SlackViewDecoratorTestCase(TestCase):
         self.assertTrue(verify_request_mock.is_called)
         self.assertTupleEqual(verify_request_mock.call_args[0], (request_mock, ))
         self.assertEqual(resp, 'passed')
+
+
+class SlackReceiverDecoratorTestCase(TestCase):
+    def test_receiver_called(self):
+        on_reaction_added = Mock()
+
+        slack_receiver('reaction_added')(on_reaction_added)
+
+        event_received.send(SlackReceiverDecoratorTestCase, event_type='reaction_added', event_data={}, test=1)
+
+        self.assertTrue(on_reaction_added.called)
+        self.assertTupleEqual(on_reaction_added.call_args[0], ({},))
+        self.assertDictEqual(on_reaction_added.call_args[1], dict(test=1))
+
+    def test_receiver_not_called(self):
+        on_reaction_added = Mock()
+
+        slack_receiver('message')(on_reaction_added)
+
+        event_received.send(SlackReceiverDecoratorTestCase, event_type='reaction_added', event_data={}, test=1)
+
+        self.assertFalse(on_reaction_added.called)
