@@ -35,7 +35,7 @@ class EventsView(SlackView):
         return JsonResponse({})
 
     def post(self, request, *args, **kwargs):
-        json_data = json.loads(request.body)
+        json_data = json.loads(request.body.decode('utf-8'))
 
         try:
             request_type = json_data.pop('type')
