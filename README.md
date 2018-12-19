@@ -34,6 +34,7 @@ def sample_view(request, *args, **kwargs):
 
 
 ### Class-based view
+
 The `SlackView`  base class adds CSRF exempt and verification to your class-based django view.
 
 ```python
@@ -47,8 +48,10 @@ class SampleView(SlackView):
 
 ```
 
+
 ### Slash command
 To easily handle [Slack slash commands](https://api.slack.com/slash-commands), use `CommandView` as a base class for your class-based views.
+
 
 ```python
 from slack_utils.views import CommandView
@@ -79,6 +82,7 @@ Event handler subscription can be done in two ways:
 
 #### Receiver decorator
 Put them into `slack_events.py` of your app or make sure it's loadded once. 
+
 ```python
 from slack_utils.decorators import slack_receiver
 
