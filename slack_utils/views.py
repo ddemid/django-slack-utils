@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 
 from slack_utils import signals
+from slack_utils.commands import registry
 from slack_utils.decorators import slack_view
 from slack_utils.forms import CommandForm
 
@@ -17,7 +18,10 @@ class SlackView(View):
 
 class CommandView(SlackView):
     def handle_command(self, command, text, **kwargs):
-        raise NotImplementedError
+        try:
+            return registry[command](text, **kwargs)
+        except KeyError:
+            return HttpResponseBadRequest('Invalid slash command')
 
     def post(self, request, *args, **kwargs):
         form = CommandForm(request.POST)

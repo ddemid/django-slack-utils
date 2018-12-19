@@ -4,7 +4,40 @@ from unittest.mock import Mock
 from django.http import HttpResponse
 from django.test import TestCase, RequestFactory
 
+from slack_utils.commands import CommandsRegistry, CommandsRegistryError, registry
 from slack_utils.views import CommandView
+
+
+class RegistryTestCase(TestCase):
+    def setUp(self):
+        self.registry = CommandsRegistry()
+
+    def test_register(self):
+        def handler(text, **kwargs):
+            pass
+
+        self.registry.register('/test', handler)
+
+        self.assertEqual(self.registry['/test'], handler)
+
+    def test_already_registered(self):
+        def handler(text, **kwargs):
+            pass
+
+        self.registry.register('/test', handler)
+        self.assertRaises(CommandsRegistryError, self.registry.register, '/test', lambda x: x)
+        self.assertEqual(self.registry['/test'], handler)
+
+    def test_key_error(self):
+        self.assertRaises(KeyError, lambda: self.registry['/test'])
+
+    def test_clear(self):
+        def handler(text, **kwargs):
+            pass
+
+        self.registry.register('/test', handler)
+        self.registry.clear()
+        self.assertRaises(KeyError, lambda: self.registry['/test'])
 
 
 class CommandViewCase(TestCase):
@@ -82,4 +115,23 @@ class CommandViewCase(TestCase):
         self.assertEqual(resp.status_code, 400)
         self.assertFalse(handle_command_mock.called)
 
+    def test_registry_usage(self):
+        def handler(text, **kwargs):
+            return HttpResponse(text)
 
+        registry.register('/test', handler)
+
+        try:
+            view = CommandView()
+
+            self.assertEqual(view.handle_command('/test', "Text").content, HttpResponse("Text").content)
+
+        finally:
+            registry.clear()
+
+    def test_registry_usage_no_handler(self):
+        view = CommandView()
+
+        resp = view.handle_command('/test', "Text")
+
+        self.assertEqual(resp.status_code, 400)

@@ -2,7 +2,9 @@ from unittest import mock
 from unittest.mock import Mock
 
 from django.test import TestCase
-from slack_utils.decorators import slack_view, slack_receiver
+
+from slack_utils.commands import registry
+from slack_utils.decorators import slack_view, slack_receiver, slack_command
 from slack_utils.signals import event_received
 
 
@@ -66,3 +68,19 @@ class SlackReceiverDecoratorTestCase(TestCase):
         event_received.send(SlackReceiverDecoratorTestCase, event_type='reaction_added', event_data={}, test=1)
 
         self.assertFalse(on_reaction_added.called)
+
+
+class SlackCommandDecoratorTestCase(TestCase):
+
+    def tearDown(self):
+        registry.clear()
+
+    def test_registers(self):
+        def handler(text, **kwargs):
+            pass
+
+        with mock.patch('slack_utils.decorators.registry.register') as register_mock:
+            slack_command('/test')(handler)
+
+        self.assertTrue(register_mock.called)
+        self.assertTupleEqual(register_mock.call_args[0], ('/test', handler, ))
