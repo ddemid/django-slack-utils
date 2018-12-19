@@ -1,3 +1,4 @@
+import json
 from unittest import mock
 
 from django.http import JsonResponse
@@ -10,17 +11,17 @@ from slack_utils import signals
 class EventsViewTestCase(TestCase):
     def test_verification(self):
         with mock.patch('slack_utils.decorators.verify_request') as verify_mock:
-            resp = self.client.post(reverse('slack-events-api'), {}, content_type='application/json')
+            resp = self.client.post(reverse('slack-events-api'), "{}", content_type='application/json')
         self.assertTrue(verify_mock.called)
 
     def test_url_verification_handshake(self):
 
         with mock.patch('slack_utils.decorators.verify_request', return_value=True):
-            resp = self.client.post(reverse('slack-events-api'), {
+            resp = self.client.post(reverse('slack-events-api'), json.dumps({
                 "token": "Jhj5dZrVaK7ZwHHjRyZWjbDl",
                 "challenge": "3eZbrw1aBm2rZgRNFdxV2595E9CY3gmdALWMmHkvFXO7tYXAYM8P",
                 "type": "url_verification"
-            }, content_type='application/json')
+            }), content_type='application/json')
 
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content,
@@ -28,13 +29,13 @@ class EventsViewTestCase(TestCase):
 
     def test_app_rate_limited(self):
         with mock.patch('slack_utils.decorators.verify_request', return_value=True):
-            resp = self.client.post(reverse('slack-events-api'), {
+            resp = self.client.post(reverse('slack-events-api'), json.dumps({
                 "token": "Jhj5dZrVaK7ZwHHjRyZWjbDl",
                 "type": "app_rate_limited",
                 "team_id": "T123456",
                 "minute_rate_limited": 1518467820,
                 "api_app_id": "A123456"
-        }, content_type='application/json')
+        }), content_type='application/json')
 
         self.assertEqual(resp.status_code, 200)
 
@@ -50,7 +51,7 @@ class EventsViewTestCase(TestCase):
 
         try:
             with mock.patch('slack_utils.decorators.verify_request', return_value=True):
-                resp = self.client.post(reverse('slack-events-api'), {
+                resp = self.client.post(reverse('slack-events-api'), json.dumps({
                     "token": "z26uFbvR1xHJEdHE1OQiO6t8",
                     "team_id": "T061EG9RZ",
                     "api_app_id": "A0FFV41KK",
@@ -72,7 +73,7 @@ class EventsViewTestCase(TestCase):
                     ],
                     "event_id": "Ev9UQ52YNA",
                     "event_time": 1234567890
-                }, content_type='application/json')
+                }), content_type='application/json')
         finally:
             signals.event_received.disconnect(handler)
 
