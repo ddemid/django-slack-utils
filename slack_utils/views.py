@@ -1,6 +1,6 @@
 import json
 
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 
@@ -19,7 +19,11 @@ class SlackView(View):
 class CommandView(SlackView):
     def handle_command(self, command, text, **kwargs):
         try:
-            return registry[command](text, **kwargs)
+            data = registry[command](text, **kwargs)
+            if isinstance(data, dict):
+                return JsonResponse(data)
+            else:
+                return HttpResponse(data)
         except KeyError:
             return HttpResponseBadRequest('Invalid slash command')
 

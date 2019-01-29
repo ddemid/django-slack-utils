@@ -68,12 +68,11 @@ Now just add a handler function to `slack.py` module of your app.
 
 ```python
 from slack_utils.decorators import slack_command
-from django.http import HttpResponse
 
 @slack_command('/test')
 def test_command(text, **kwargs):
     # your logic
-    return HttpResponse("Hello!")
+    return "Hello!"     # or {'text': "hello!"}
 
 ```
 

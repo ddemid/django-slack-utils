@@ -1,7 +1,7 @@
 from unittest import mock
 from unittest.mock import Mock
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.test import TestCase, RequestFactory
 
 from slack_utils.commands import CommandsRegistry, CommandsRegistryError, registry
@@ -117,7 +117,7 @@ class CommandViewCase(TestCase):
 
     def test_registry_usage(self):
         def handler(text, **kwargs):
-            return HttpResponse(text)
+            return text
 
         registry.register('/test', handler)
 
@@ -135,3 +135,17 @@ class CommandViewCase(TestCase):
         resp = view.handle_command('/test', "Text")
 
         self.assertEqual(resp.status_code, 400)
+
+    def test_json_return(self):
+        def handler(text, **kwargs):
+            return {'text': text}
+
+        registry.register('/test', handler)
+
+        try:
+            view = CommandView()
+
+            self.assertEqual(view.handle_command('/test', "Text").content, JsonResponse({'text': "Text"}).content)
+
+        finally:
+            registry.clear()
