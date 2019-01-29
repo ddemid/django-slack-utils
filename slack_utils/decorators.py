@@ -31,4 +31,5 @@ def slack_receiver(event_type_):
 def slack_command(command):
     def _decorator(handler_func):
         registry.register(command, handler_func)
+        return handler_func
     return _decorator
