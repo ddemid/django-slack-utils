@@ -105,3 +105,6 @@ venv.bak/
 
 # IDE stuff
 .vscode
+
+# OSX stuff
+.DS_Store

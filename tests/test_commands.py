@@ -149,3 +149,30 @@ class CommandViewCase(TestCase):
 
         finally:
             registry.clear()
+
+    def test_slash_command_without_text(self):
+        factory = RequestFactory()
+        request = factory.post(
+            "/path",
+            dict(
+                token="token",
+                team_id="team_id",
+                team_domain="team_domain",
+                enterprise_id="enterprise_id",
+                enterprise_name="enterprise_name",
+                channel_id="channel_id",
+                channel_name="channel_name",
+                user_id="user_id",
+                user_name="user_name",
+                command="command_without_text",
+                response_url="http://responseurl.com/path",
+                trigger_id="trigger_id",
+            ),
+        )
+
+        with mock.patch("slack_utils.decorators.verify_request", return_value=True):
+            view = CommandView()
+            with mock.patch("slack_utils.views.registry") as registry_mock:
+                registry_mock.register("command_without_text", lambda: None)
+                resp = view.post(request)
+        self.assertEqual(resp.status_code, 200, resp.content)
