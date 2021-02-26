@@ -24,6 +24,7 @@ setup(
     version=find_version("slack_utils", "__init__.py"),
     description="A Django app for handling Slack webhooks",
     long_description=read('README.md'),
+    long_description_content_type='text/markdown',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
