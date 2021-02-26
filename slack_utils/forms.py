@@ -12,6 +12,6 @@ class CommandForm(forms.Form):
     user_id = forms.CharField()
     user_name = forms.CharField()
     command = forms.CharField()
-    text = forms.CharField()
+    text = forms.CharField(required=False)
     response_url = forms.URLField()
     trigger_id = forms.CharField()
