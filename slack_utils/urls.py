@@ -1,8 +1,8 @@
-from django.conf.urls import url
+from django.urls import include, re_path
 
 from slack_utils import views
 
 urlpatterns = [
-    url('events/$', views.EventsView.as_view(), name='slack-events-api'),
-    url('commands/$', views.CommandView.as_view(), name='slack-commands'),
+    re_path('events/$', views.EventsView.as_view(), name='slack-events-api'),
+    re_path('commands/$', views.CommandView.as_view(), name='slack-commands'),
 ]
